@@ -26,7 +26,7 @@
 
 #include "power_monitor.h"
 
-#include "../lcd/marlinui.h"
+#include "../lcd/MarlinUI.h"
 #include "../lcd/lcdprint.h"
 #include "../libs/numtostr.h"
 

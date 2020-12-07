@@ -21,7 +21,7 @@
  */
 
 #include "../gcode.h"
-#include "../../lcd/marlinui.h"
+#include "../../lcd/MarlinUI.h"
 
 /**
  * M117: Set LCD Status Message

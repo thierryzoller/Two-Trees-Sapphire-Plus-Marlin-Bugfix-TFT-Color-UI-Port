@@ -128,18 +128,25 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_MKS_ROBIN_NANO
+  #if mboard == Nano_V1
+    #define MOTHERBOARD BOARD_MKS_ROBIN_NANO
+  #elif mboard == Nano_V2
+    #define MOTHERBOARD BOARD_MKS_ROBIN_NANO_V2
+  #else
+    #error "Please choose a main board type in Setup.h"
+  #endif
 #endif
-
 // Name displayed in the LCD "Ready" message and Info menu
-#if ANY(Bluer)
+#if ENABLED(Bluer)
   #define CUSTOM_MACHINE_NAME "TT BlueR"
-#elif ANY(Bluer_Plus)
+#elif ENABLED(Bluer_Plus)
   #define CUSTOM_MACHINE_NAME "TT BlueR Plus"
-#elif ANY(Sapphire_Pro)
+#elif ENABLED(Sapphire_Pro)
   #define CUSTOM_MACHINE_NAME "TT Sapphire Pro"
-#else
+#elif ANY(Sapphire_Plus, Sapphire_Plus_Rotated_Screen)
   #define CUSTOM_MACHINE_NAME "TT Sapphire Plus"
+#else
+  #error "You need to choose a printer type in Setup.h"
 #endif
 
 // Printer's unique ID, used by some programs to differentiate between machines.
@@ -477,7 +484,7 @@
 // Above this temperature the heater will be switched off.
 // This can protect components from overheating, but NOT from shorts and failures.
 // (Use MINTEMP for thermistor short/failure protection.)
-#define HEATER_0_MAXTEMP 275
+#define HEATER_0_MAXTEMP 300
 #define HEATER_1_MAXTEMP 275
 #define HEATER_2_MAXTEMP 275
 #define HEATER_3_MAXTEMP 275
@@ -511,9 +518,9 @@
     #define DEFAULT_Ki_LIST {   1.08,   1.08 }
     #define DEFAULT_Kd_LIST { 114.00, 114.00 }
   #else
-    #define DEFAULT_Kp  22.20
-    #define DEFAULT_Ki   1.08
-    #define DEFAULT_Kd 114.00
+    #define DEFAULT_Kp  hotend_Kp
+    #define DEFAULT_Ki  hotend_Ki
+    #define DEFAULT_Kd  hotend_Kd
   #endif
 #endif // PIDTEMP
 
@@ -534,8 +541,9 @@
  * heater. If your configuration is significantly different than this and you don't understand
  * the issues involved, don't use bed PID until someone else verifies that your hardware works.
  */
-#define PIDTEMPBED
-
+#if DISABLED(bang_bang)
+  #define PIDTEMPBED
+#endif
 //#define BED_LIMIT_SWITCHING
 
 /**
@@ -552,9 +560,9 @@
 
   // 120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   // from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp 10.00
-  #define DEFAULT_bedKi .023
-  #define DEFAULT_bedKd 305.4
+  #define DEFAULT_bedKp bed_Kp
+  #define DEFAULT_bedKi bed_Ki
+  #define DEFAULT_bedKd bed_Kd
 
   // FIND YOUR OWN: "M303 E-1 C8 S90" to run autotune on the bed at 90 degreesC for 8 cycles.
 #endif // PIDTEMPBED
@@ -584,8 +592,11 @@
  * Note: For Bowden Extruders make this large enough to allow load/unload.
  */
 #define PREVENT_LENGTHY_EXTRUDE
-#define EXTRUDE_MAXLENGTH 1000
-
+#if DISABLED(direct_drive)
+  #define EXTRUDE_MAXLENGTH 1000
+#else
+  #define EXTRUDE_MAXLENGTH 200
+#endif
 //===========================================================================
 //======================== Thermal Runaway Protection =======================
 //===========================================================================
@@ -698,7 +709,7 @@
  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE
  * :['A4988', 'A5984', 'DRV8825', 'LV8729', 'L6470', 'L6474', 'POWERSTEP01', 'TB6560', 'TB6600', 'TMC2100', 'TMC2130', 'TMC2130_STANDALONE', 'TMC2160', 'TMC2160_STANDALONE', 'TMC2208', 'TMC2208_STANDALONE', 'TMC2209', 'TMC2209_STANDALONE', 'TMC26X', 'TMC26X_STANDALONE', 'TMC2660', 'TMC2660_STANDALONE', 'TMC5130', 'TMC5130_STANDALONE', 'TMC5160', 'TMC5160_STANDALONE']
  */
-#if ANY(stock_drivers)
+#if ANY(stock_drivers) && DISABLED(Bluer_Plus)
   #define X_DRIVER_TYPE  TMC2208_STANDALONE
   #define Y_DRIVER_TYPE  TMC2208_STANDALONE
   #define Z_DRIVER_TYPE  A4988
@@ -708,6 +719,11 @@
     #else
       #define E0_DRIVER_TYPE A4988
   #endif
+#elif ANY(stock_drivers) && ENABLED(Bluer_Plus)
+  #define X_DRIVER_TYPE  TMC2209_STANDALONE
+  #define Y_DRIVER_TYPE  TMC2209_STANDALONE
+  #define Z_DRIVER_TYPE  TMC2209_STANDALONE
+  #define E_DRIVER_TYPE  TMC2209_STANDALONE
 #elif ANY(custom_drivers)
   #define X_DRIVER_TYPE  x_driver
   #define Y_DRIVER_TYPE  y_driver
@@ -718,7 +734,7 @@
     #define Z2_DRIVER_TYPE z2_driver
   #endif
   //#define Z3_DRIVER_TYPE A4988
-  //#define Z4_DRIVER_TYPE A498*
+  //#define Z4_DRIVER_TYPE A4988
   #define E0_DRIVER_TYPE e_driver
   //#define E1_DRIVER_TYPE A4988
   //#define E2_DRIVER_TYPE A4988
@@ -775,7 +791,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2...]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 415 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { step_x, step_y, step_z, step_e }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -822,11 +838,13 @@
  * When changing speed and direction, if the difference is less than the
  * value set here, it may happen instantaneously.
  */
-//#define CLASSIC_JERK
+#if DISABLED(junction_deviation)
+  #define CLASSIC_JERK
+#endif
 #if ENABLED(CLASSIC_JERK)
-  #define DEFAULT_XJERK 10.0
-  #define DEFAULT_YJERK 10.0
-  #define DEFAULT_ZJERK  0.3
+  #define DEFAULT_XJERK jerk_x
+  #define DEFAULT_YJERK jerk_y
+  #define DEFAULT_ZJERK jerk_z
 
   //#define TRAVEL_EXTRA_XYJERK 0.0     // Additional jerk allowance for all travel moves
 
@@ -846,7 +864,7 @@
  *   https://blog.kyneticcnc.com/2018/10/computing-junction-deviation-for-marlin.html
  */
 #if DISABLED(CLASSIC_JERK)
-  #define JUNCTION_DEVIATION_MM 0.017 // (mm) Distance from real junction edge
+  #define JUNCTION_DEVIATION_MM j_value // (mm) Distance from real junction edge
   #define JD_HANDLE_SMALL_SEGMENTS    // Use curvature estimation instead of just the junction angle
                                       // for small segments (< 1mm) with large junction angles (> 135°).
 #endif
@@ -859,7 +877,10 @@
  *
  * See https://github.com/synthetos/TinyG/wiki/Jerk-Controlled-Motion-Explained
  */
-#define S_CURVE_ACCELERATION
+
+#if ENABLED(scurve)
+  #define S_CURVE_ACCELERATION
+#endif
 
 //===========================================================================
 //============================= Z Probe Options =============================
@@ -1140,13 +1161,20 @@
 // For direct drive extruder v9 set to true, for geared extruder set to false.
 #if ANY(stock_drivers)
   #define INVERT_E0_DIR true
-#elif ANY(custom_drivers)
+#elif ANY(custom_drivers) && DISABLED(invert_drivers)
   #define INVERT_X_DIR true
   #define INVERT_Y_DIR true
   #define INVERT_Z_DIR false
 
   #define INVERT_E0_DIR true
   #define INVERT_E1_DIR false     // Used for Z2 stepper
+#elif ENABLED(invert_drivers)
+  #define INVERT_X_DIR invert_x
+  #define INVERT_Y_DIR invert_y
+  #define INVERT_Z_DIR invert_z1
+
+  #define INVERT_E0_DIR invert_e
+  #define INVERT_E1_DIR invert_z2     // Used for Z2 stepper
 #else
   #define INVERT_X_DIR true
   #define INVERT_Y_DIR true
@@ -1363,7 +1391,7 @@
   #if ENABLED(G26_MESH_VALIDATION)
     #define MESH_TEST_NOZZLE_SIZE    0.4  // (mm) Diameter of primary nozzle.
     #define MESH_TEST_LAYER_HEIGHT   0.2  // (mm) Default layer height for the G26 Mesh Validation Tool.
-    #define MESH_TEST_HOTEND_TEMP  205    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
+    #define MESH_TEST_HOTEND_TEMP  200    // (°C) Default nozzle temperature for the G26 Mesh Validation Tool.
     #define MESH_TEST_BED_TEMP      60    // (°C) Default bed temperature for the G26 Mesh Validation Tool.
     #define G26_XY_FEEDRATE         20    // (mm/s) Feedrate for XY Moves for the G26 Mesh Validation Tool.
     #define G26_RETRACT_MULTIPLIER   1.0  // G26 Q (retraction) used by default between mesh test elements.
@@ -1374,7 +1402,14 @@
 #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 5
+  #if ENABLED(bltouch_3x3)
+    #define GRID_MAX_POINTS_X 3
+  #elif ENABLED(bltouch_5x5)
+    #define GRID_MAX_POINTS_X 5
+  #elif ENABLED(bltouch_7x7)
+    #define GRID_MAX_POINTS_X 7
+  #endif
+
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   // Probe along the Y axis, advancing X after each column
@@ -1407,7 +1442,7 @@
   //#define MESH_EDIT_GFX_OVERLAY   // Display a graphics overlay while editing the mesh
 
   #define MESH_INSET 1              // Set Mesh bounds as an inset region of the bed
-  #define GRID_MAX_POINTS_X 9      // Don't use more than 15 points per axis, implementation limited.
+  #define GRID_MAX_POINTS_X 10      // Don't use more than 15 points per axis, implementation limited.
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
   #define UBL_MESH_EDIT_MOVES_Z     // Sophisticated users prefer no movement of nozzle
@@ -2310,7 +2345,9 @@
 // 480x320, 3.5", SPI Display From MKS
 // Normally used in MKS Robin Nano V2
 //
-//#define MKS_TS35_V2_0
+#if MOTHERBOARD == BOARD_MKS_ROBIN_NANO_V2
+  #define MKS_TS35_V2_0
+#endif
 
 //
 // 320x240, 2.4", FSMC Display From MKS
@@ -2334,14 +2371,14 @@
 // 480x320, 3.5", FSMC Display From MKS
 // Normally used in MKS Robin Nano V1.2
 //
-#if ANY(Bluer, Sapphire_Pro, Sapphire_Plus, Sapphire_Plus_Rotated_Screen)
+#if ANY(Bluer, Sapphire_Pro, Sapphire_Plus, Sapphire_Plus_Rotated_Screen) && MOTHERBOARD == BOARD_MKS_ROBIN_NANO
   #define MKS_ROBIN_TFT35
 #endif
 
 //
 // 480x272, 4.3", FSMC Display From MKS
 //
-#if ANY(Bluer_Plus)
+#if ANY(Bluer_Plus) && MOTHERBOARD == BOARD_MKS_ROBIN_NANO
   #define MKS_ROBIN_TFT43
 #endif
 
@@ -2394,13 +2431,14 @@
  *   For LVGL_UI also copy the 'assets' folder from the build directory to the
  *   root of your SD card, together with the compiled firmware.
  */
-#if ANY(classic_stock_marlin)
-  #define TFT_CLASSIC_UI
-#elif ANY(modern_touch_mks_interface)
-  #define TFT_LVGL_UI
-#else
-  #define TFT_COLOR_UI
-#endif
+
+  #if ANY(classic_stock_marlin)
+    #define TFT_CLASSIC_UI
+  #elif ANY(modern_touch_mks_interface)
+    #define TFT_LVGL_UI
+  #else
+    #define TFT_COLOR_UI
+  #endif
 
 /**
  * TFT Rotation. Set to one of the following values:
@@ -2410,7 +2448,10 @@
  *   TFT_ROTATE_270, TFT_ROTATE_270_MIRROR_X, TFT_ROTATE_270_MIRROR_Y,
  *   TFT_MIRROR_X, TFT_MIRROR_Y, TFT_NO_ROTATION
  */
-//#define TFT_ROTATION TFT_ROTATE_180
+
+#if ANY(Bluer_Plus, Sapphire_Plus_Rotated_Screen)
+  #define TFT_ROTATION TFT_ROTATE_180
+#endif
 
 //=============================================================================
 //============================  Other Controllers  ============================
@@ -2429,7 +2470,7 @@
   #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens
   #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus
 
-  #define TOUCH_SCREEN_CALIBRATION
+  //#define TOUCH_SCREEN_CALIBRATION
 
   //#define XPT2046_X_CALIBRATION 12316
   //#define XPT2046_Y_CALIBRATION -8981

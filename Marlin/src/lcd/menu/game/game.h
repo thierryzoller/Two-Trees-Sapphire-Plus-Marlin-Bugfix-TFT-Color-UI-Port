@@ -22,9 +22,9 @@
 #pragma once
 
 #include "../../../inc/MarlinConfigPre.h"
-#include "../../dogm/marlinui_DOGM.h"
+#include "../../dogm/MarlinUI_DOGM.h"
 #include "../../lcdprint.h"
-#include "../../marlinui.h"
+#include "../../MarlinUI.h"
 
 //#define MUTE_GAMES
 

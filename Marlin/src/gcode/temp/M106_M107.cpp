@@ -29,7 +29,7 @@
 #include "../../module/temperature.h"
 
 #if PREHEAT_COUNT
-  #include "../../lcd/marlinui.h"
+  #include "../../lcd/MarlinUI.h"
 #endif
 
 #if ENABLED(SINGLENOZZLE)

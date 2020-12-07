@@ -25,7 +25,7 @@
 
 #include "cancel_object.h"
 #include "../gcode/gcode.h"
-#include "../lcd/marlinui.h"
+#include "../lcd/MarlinUI.h"
 
 CancelObject cancelable;
 
