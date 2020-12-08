@@ -128,9 +128,9 @@
 
 // Choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #if mboard == Nano_V1
+  #if ENABLED(MB_ROBIN_NANO_V1x)
     #define MOTHERBOARD BOARD_MKS_ROBIN_NANO
-  #elif mboard == Nano_V2
+  #elif ENABLED(MB_ROBIN_NANO_V2)
     #define MOTHERBOARD BOARD_MKS_ROBIN_NANO_V2
   #else
     #error "Please choose a main board type in Setup.h"
@@ -2373,6 +2373,7 @@
 //
 #if ANY(Bluer, Sapphire_Pro, Sapphire_Plus, Sapphire_Plus_Rotated_Screen) && MOTHERBOARD == BOARD_MKS_ROBIN_NANO
   #define MKS_ROBIN_TFT35
+  #define TFT_480X320
 #endif
 
 //
@@ -2380,6 +2381,7 @@
 //
 #if ANY(Bluer_Plus) && MOTHERBOARD == BOARD_MKS_ROBIN_NANO
   #define MKS_ROBIN_TFT43
+  #define TFT_480X272
 #endif
 
 //
@@ -2470,14 +2472,15 @@
   #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens
   #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus
 
-  //#define TOUCH_SCREEN_CALIBRATION
+  #define TOUCH_SCREEN_CALIBRATION
 
-  //#define XPT2046_X_CALIBRATION 12316
-  //#define XPT2046_Y_CALIBRATION -8981
-  //#define XPT2046_X_OFFSET        -43
-  //#define XPT2046_Y_OFFSET        257
+#if DISABLED(TOUCH_SCREEN_CALIBRATION)
+  #define XPT2046_X_CALIBRATION 12316
+  #define XPT2046_Y_CALIBRATION -8981
+  #define XPT2046_X_OFFSET        -43
+  #define XPT2046_Y_OFFSET        257
 #endif
-
+#endif
 //
 // RepRapWorld REPRAPWORLD_KEYPAD v1.1
 // https://reprapworld.com/products/electronics/ramps/keypad_v1_0_fully_assembled/
