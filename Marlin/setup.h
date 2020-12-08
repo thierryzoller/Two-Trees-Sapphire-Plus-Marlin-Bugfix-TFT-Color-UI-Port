@@ -90,15 +90,11 @@ Enjoy!
  *          TMC5130, TMC5130_STANDALONE, TMC5160, TMC5160_STANDALONE  */
 
 #if ENABLED(custom_drivers)
-
-
   #define x_driver    TMC2209_STANDALONE
   #define y_driver    TMC2209_STANDALONE
   #define z1_driver   TMC2209_STANDALONE
   //#define z2_driver   TMC2209_STANDALONE                  //Called E1 but used for Z2 stepper
-  #define e_driver    TMC2209_STANDALONEs
-
-
+  #define e_driver    TMC2209_STANDALONE
 #endif
 
 // {02b} Do you need to invert driver direction?
@@ -119,9 +115,9 @@ Enjoy!
 
 // {03} What type of User Interface do you want to use?
 
-  //#define classic_stock_marlin           // This is like the old interface with monotone screens and turn nob controls but with touch buttons
+  #define classic_stock_marlin           // This is like the old interface with monotone screens and turn nob controls but with touch buttons
   //#define touch_colour_marlin            // This is similar to above but with more touch friendly possitioning of buttons
-  #define modern_touch_mks_interface     // This is a modern full touch interface, but has some limitations in terms of features
+  //#define modern_touch_mks_interface     // This is a modern full touch interface, but has some limitations in terms of features
 
   // Quick note about the MKS interface. I've got it runnings and setup as much as I could but because I don't like using it, I will not be looking at
   // further developing/porting function to for it. My goal was to port it over and get it running. Hopefully, MKS will further develope this and give
