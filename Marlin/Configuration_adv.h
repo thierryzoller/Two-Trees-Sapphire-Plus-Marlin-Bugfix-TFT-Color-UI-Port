@@ -657,9 +657,9 @@
 //#define SENSORLESS_BACKOFF_MM  { 2, 2 }     // (mm) Backoff from endstops before sensorless homing
 
 #define HOMING_BUMP_MM      { 5, 5, 4 }       // (mm) Backoff from endstops after first bump
-#define HOMING_BUMP_DIVISOR { 20, 20, 16 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
+#define HOMING_BUMP_DIVISOR { 20, 20, 12 }       // Re-Bump Speed Divisor (Divides the Homing Feedrate)
 
-#define HOMING_BACKOFF_POST_MM { 4, 4, 4 }  // (mm) Backoff from endstops after homing
+//#define HOMING_BACKOFF_POST_MM { 5, 5, 2 }  // (mm) Backoff from endstops after homing
 
 //#define QUICK_HOME                          // If G28 contains XY do a diagonal move first
 #define HOME_Y_BEFORE_X                     // If G28 contains XY home Y before X
@@ -685,7 +685,7 @@
 
   // Safety: The probe needs time to recognize the command.
   //         Minimum command delay (ms). Enable and increase if needed.
-  #define BLTOUCH_DELAY 300
+  //#define BLTOUCH_DELAY 300
 
   /**
    * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -1077,7 +1077,7 @@
   #if HAS_BED_PROBE
     #define PROBE_OFFSET_WIZARD
     #if ENABLED(PROBE_OFFSET_WIZARD)
-      #define PROBE_OFFSET_START -0.2   // Estimated nozzle-to-probe Z offset, plus a little extra
+      #define PROBE_OFFSET_START -0.4s   // Estimated nozzle-to-probe Z offset, plus a little extra
     #endif
   #endif
 

@@ -65,8 +65,8 @@ Enjoy!
 
   //#define Bluer
   //#define Bluer_Plus            //<< Still in testing due to TFT43 screen. Please rename robin_nano35.bin to robin_nano43.bin to flash.
-  //#define Sapphire_Pro
-  #define Sapphire_Plus
+  #define Sapphire_Pro
+  //#define Sapphire_Plus
   //#define Sapphire_Plus_Rotated_Screen
 
  // {01a} What type of main board do you have?
@@ -94,7 +94,7 @@ Enjoy!
   #define x_driver    TMC2209_STANDALONE
   #define y_driver    TMC2209_STANDALONE
   #define z1_driver   TMC2209_STANDALONE
-  #define z2_driver   TMC2209_STANDALONE                  //Called E1 but used for Z2 stepper
+  //#define z2_driver   TMC2209_STANDALONE                  //Called E1 but used for Z2 stepper
   #define e_driver    TMC2209_STANDALONE
 
 #endif
@@ -107,8 +107,8 @@ Enjoy!
 
   #define invert_x    true
   #define invert_y    true
-  #define invert_z1   true
-  #define invert_z2   true
+  #define invert_z1   false
+  //#define invert_z2   true
   #define invert_e    true
 
 #endif
@@ -144,8 +144,8 @@ Enjoy!
   #if ANY(bltouch_3x3, bltouch_5x5, bltouch_7x7, unified_bed_levelling, three_point)
 
     #define probeX 0           // LEFT is -X, RIGHT is +X (Movement of hotend)
-    #define probeY -44         // BACK is -Y, FORWARD is +Y (Movement of hotend)
-    #define probeZ -2.52        // UP is -Z, and DOWN is +Z (Movement of bed)
+    #define probeY -33        // BACK is -Y, FORWARD is +Y (Movement of hotend)
+    #define probeZ -1        // UP is -Z, and DOWN is +Z (Movement of bed)
 
   #endif
 
@@ -155,13 +155,13 @@ Enjoy!
 //      Fillament Runout settings can be changed in the LCD menu in Setting > Configuration > Advanced > Fillament (Load / Unload)
 //      Retract settings can be changed in Setting > Configuration > Retact. This is altimately overwritten by your slicer.
 
-  #define direct_drive    //<< comment out " //#define direct_drive " for Bowden Drive
+  //#define direct_drive    //<< comment out " //#define direct_drive " for Bowden Drive
 
 //----------------------------------------------------------------------------------
 
 // {06} Will you be using a fillament runout sensor?
 
-  #define filament_runout  //<< comment out " //#define filament_runout " to disable
+  //#define filament_runout  //<< comment out " //#define filament_runout " to disable
 
 //----------------------------------------------------------------------------------
 
@@ -178,9 +178,9 @@ Enjoy!
 // {08a} Hotend PID Autotune Settings
 
   #if ENABLED(custom_pid_hotend)
-    #define hotend_Kp      22.20
-    #define hotend_Ki       1.08
-    #define hotend_Kd     114.00
+    #define hotend_Kp      12.13
+    #define hotend_Ki       0.78
+    #define hotend_Kd     46.90
   #endif
 // {08b} Bed PID Autotune Settings
 
@@ -189,9 +189,9 @@ Enjoy!
   #if DISABLED(bang_bang)
     #define custom_pid_bed
       #if ENABLED(custom_pid_bed)
-        #define bed_Kp      46.6
-        #define bed_Ki      5.82
-        #define bed_Kd     249.2
+        #define bed_Kp      40.06
+        #define bed_Ki      4.03
+        #define bed_Kd     265.44
       #endif
     #endif
 
@@ -204,14 +204,14 @@ Enjoy!
 
   #define custom_motion
     #if ENABLED(custom_motion)
-      #define linear_advance true         // default is set to K0
+      //#define linear_advance true         // default is set to K0
         #if linear_advance == true
           #define LA_k_value 0.075          // WARNING!!! Beware that if you are using a TMC2208 driver on E, there is a large chance that the driver will shut down mid print.
         #endif
       #define scurve                       // S CURVE works in conjuction with LINEAR ADVANCE with the Experimental S Curve feature.
       #define junction_deviation           // Classic Jerk will be enabled if you disable junction deviation.
         #if ENABLED(junction_deviation)
-          #define j_value 0.17
+          #define j_value 0.25
         #else
           #define jerk_x  10.0
           #define jerk_y  10.0
@@ -223,6 +223,6 @@ Enjoy!
 
   #define step_x      80
   #define step_y      80
-  #define step_z     400
-  #define step_e     413
+  #define step_z     1600
+  #define step_e     455
 
