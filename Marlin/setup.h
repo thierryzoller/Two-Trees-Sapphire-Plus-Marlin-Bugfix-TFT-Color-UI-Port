@@ -71,8 +71,8 @@ Enjoy!
 
  // {01a} What type of main board do you have?
 
-  //#define MB_ROBIN_NANO_V1x           //<< MKS Robin Nano V1.x
-  #define MB_ROBIN_NANO_V2          //<< MKS Robin Nano V2.x
+  #define MB_ROBIN_NANO_V1x           //<< MKS Robin Nano V1.x
+  //#define MB_ROBIN_NANO_V2          //<< MKS Robin Nano V2.x
 //----------------------------------------------------------------------------------
 
 // {02} Are you using custom stepper drivers?
@@ -129,10 +129,10 @@ Enjoy!
 
   //#define manual_bed_lvl                 // Like ABL (auto bed levelling) this allows you to manually build a mesh of your bed with the piece of paper technique
   //#define bltouch_3x3                    // Bltouch ABL with a 3x3 grid. This works well for fast probing before each print. Place G29 in you start gcode.
-  //#define bltouch_5x5                    // Bltouch ABL with a 5x5 grid. Great for most cases. A bit slower than above.
+  #define bltouch_5x5                    // Bltouch ABL with a 5x5 grid. Great for most cases. A bit slower than above.
   //#define bltouch_7x7                    // Bltouch ABL with a 7x7 grid. Slow. If you want this, I suggest Unified Bed Leveling below, but it's up to you.
   //#define three_point                    // Bltouch ABL with a 3 point leveling for perfectly flat beds.
-  #define unified_bed_levelling            // Bltouch ABL with a fully comprehensive system. This is best for large print beds with lots of warping.
+  //#define unified_bed_levelling            // Bltouch ABL with a fully comprehensive system. This is best for large print beds with lots of warping.
 
 
 // {04a}  << If you are using "manual_bed_lvl" then you can skip to {05} >>
@@ -142,8 +142,8 @@ Enjoy!
   #if ANY(bltouch_3x3, bltouch_5x5, bltouch_7x7, unified_bed_levelling, three_point)
 
     #define probeX 0           // LEFT is -X, RIGHT is +X (Movement of hotend)
-    #define probeY -33        // BACK is -Y, FORWARD is +Y (Movement of hotend)
-    #define probeZ -1        // UP is -Z, and DOWN is +Z (Movement of bed)
+    #define probeY -40        // BACK is -Y, FORWARD is +Y (Movement of hotend)
+    #define probeZ 0        // UP is -Z, and DOWN is +Z (Movement of bed)
 
   #endif
 
@@ -176,9 +176,9 @@ Enjoy!
 // {08a} Hotend PID Autotune Settings
 
   #if ENABLED(custom_pid_hotend)
-    #define hotend_Kp      12.13
-    #define hotend_Ki       0.78
-    #define hotend_Kd     46.90
+    #define hotend_Kp      10.14
+    #define hotend_Ki       0.51
+    #define hotend_Kd     50.42
   #endif
 // {08b} Bed PID Autotune Settings
 
@@ -209,7 +209,7 @@ Enjoy!
       #define scurve                       // S CURVE works in conjuction with LINEAR ADVANCE with the Experimental S Curve feature.
       #define junction_deviation           // Classic Jerk will be enabled if you disable junction deviation.
         #if ENABLED(junction_deviation)
-          #define j_value 0.25
+          #define j_value 0.19
         #else
           #define jerk_x  10.0
           #define jerk_y  10.0
